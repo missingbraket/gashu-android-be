@@ -24,7 +24,8 @@ import { RouteStation } from './entities/route_station.entity';
         database: configService.get('DB_NAME'),
         username: configService.get('DB_USER'),
         password: configService.get('DB_PASSWORD'),
-        entities: [__dirname + '/**/*.entity{.ts,.js}'],
+        // entities: [__dirname + '/**/*.entity{.ts,.js}'],
+        entities: [Station, Route, RouteStation],
         synchronize: true, // 배포 시 false
         }),
     }),
