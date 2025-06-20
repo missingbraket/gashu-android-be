@@ -6,6 +6,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Station } from './entities/station.entity';
 import { Route } from './entities/route.entity';
 import { RouteStation } from './entities/route_station.entity';
+import { StationModule } from './station/station.module';
+import { RouteModule } from './route/route.module';
 
 
 @Module({
@@ -26,9 +28,11 @@ import { RouteStation } from './entities/route_station.entity';
         password: configService.get('DB_PASSWORD'),
         // entities: [__dirname + '/**/*.entity{.ts,.js}'],
         entities: [Station, Route, RouteStation],
-        synchronize: true, // 배포 시 false
+        synchronize: false, // 배포 시 false
         }),
     }),
+    StationModule,
+    RouteModule,
   ],
   controllers: [AppController],
   providers: [AppService],
