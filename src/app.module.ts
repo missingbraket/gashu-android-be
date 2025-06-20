@@ -3,6 +3,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Station } from './entities/station.entity';
+import { Route } from './entities/route.entity';
+import { RouteStation } from './entities/route_station.entity';
+
 
 @Module({
   imports: [
