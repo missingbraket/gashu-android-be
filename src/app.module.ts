@@ -1,13 +1,15 @@
-import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { HttpModule } from '@nestjs/axios';
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { StationModule } from './station/station.module';
+import { RouteModule } from './route/route.module';
+import { ArrivalModule } from './arrival/arrival.module';
 import { Station } from './entities/station.entity';
 import { Route } from './entities/route.entity';
 import { RouteStation } from './entities/route_station.entity';
-import { StationModule } from './station/station.module';
-import { RouteModule } from './route/route.module';
 
 
 @Module({
@@ -33,6 +35,8 @@ import { RouteModule } from './route/route.module';
     }),
     StationModule,
     RouteModule,
+    ArrivalModule,
+    HttpModule
   ],
   controllers: [AppController],
   providers: [AppService],
