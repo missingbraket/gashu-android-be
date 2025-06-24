@@ -7,7 +7,8 @@ import { RouteController } from './route.controller';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Route, RouteStation])],
-  providers: [RouteService],
   controllers: [RouteController],
+  providers: [RouteService],
+  exports: [RouteService],
 })
 export class RouteModule {}
