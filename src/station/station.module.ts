@@ -6,7 +6,8 @@ import { StationController } from './station.controller';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Station])],
-  providers: [StationService],
   controllers: [StationController],
+  providers: [StationService],
+  exports: [StationService],
 })
 export class StationModule {}

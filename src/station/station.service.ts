@@ -10,12 +10,13 @@ export class StationService {
     private stationRepo: Repository<Station>,
   ) {}
 
-  async findNearby(lat: number, lng: number, radius = 0.005): Promise<Station[]> {
-    // 위도/경도 단위로 반경 약 500m
-    return await this.stationRepo
+  async findNearby(lat: number, lng: number, radiusMeters = 300): Promise<Station[]> {
+    return this.stationRepo
       .createQueryBuilder('station')
-      .where('ABS(station.gpslati - :lat) < :radius', { lat, radius })
-      .andWhere('ABS(station.gpslong - :lng) < :radius', { lng, radius })
+      .where(
+        `ST_Distance_Sphere(POINT(station.gpslong, station.gpslati), POINT(:lng, :lat)) < :radius`,
+        { lng, lat, radius: radiusMeters },
+      )
       .getMany();
   }
 }
