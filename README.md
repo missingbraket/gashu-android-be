@@ -1,98 +1,56 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🚌 가슈 - 고령자 대상 AI 교통 도우미 프로젝트의 백엔드 실험 레포
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## 🚏 노선 기반 실시간 버스 위치 추적 백엔드 설계
+- NestJS를 기반 **노선 기반 실시간 버스 위치 확인**을 위한 백엔드 아키텍처를 구성  
+- 직접 노선 API, 버스 위치 API 등을 조합(Join)
+- 사용자의 현재 위치 → 목적지까지의 정류장 흐름 추적 
+- 실시간 도착 정보를 연결하는 로직을 설계, 구현
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## 🔍 기능 흐름 및 API 설계
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+### ▶️ API 활용 흐름
 
-## Project setup
+1. **`station/nearby`**  
+   - 프론트에서 전달받은 **현재 위치 (경도/위도)**를 기반으로  
+     주변 정류장 리스트를 받아옴  
+   - 여기서 **상행/하행 각각 1개씩 nodeId 추출**
 
-```bash
-$ npm install
-```
+2. **`route/routeno`**  
+   - 프론트에서 전달된 **버스 번호(routeNo)** 를 기반으로  
+     **routeId** 를 받아옴
 
-## Compile and run the project
+3. **목적지 정류장 탐색**
+   - 목적지 경도/위도 기반으로 다시 `station/nearby` 호출  
+   - 목적지 근처 정류장의 **nodeId** 확보
 
-```bash
-# development
-$ npm run start
+4. **ROUTE_STATION 테이블 조인**  
+   - 위의 nodeId, routeId를 기반으로  
+     버스 노선에서 **정류장 순서** 확인  
+   - 이를 통해 **상행/하행 방향 구분**
 
-# watch mode
-$ npm run start:dev
+5. **실제 버스 도착 시간 확인**
+   - 최종 nodeId를 `arrival/nodeid` API에 넣어  
+     **실시간 남은 시간 확인**
+     
+---
 
-# production mode
-$ npm run start:prod
-```
+## 🧱 데이터베이스 설계 및 쿼리 전략
 
-## Run tests
+- `ROUTE`, `STATION`, `ROUTE_STATION` 테이블 설계
+- 복수 nodeId, routeId 조건 기반의 조인 쿼리 작성
+- 정류장 순서 번호(`station_order`)를 기준으로 상·하행 판단
 
-```bash
-# unit tests
-$ npm run test
+---
 
-# e2e tests
-$ npm run test:e2e
+<img src="back.png" alt="메인화면" width="700"/>
 
-# test coverage
-$ npm run test:cov
-```
+---
+## 🔗 프로젝트 링크
+🗂️ [프론트레포](https://github.com/gashu-android-app/gashu-app-android.git)
+🗂️ [백앤드레포](https://github.com/gashu-android-app/gashu-backend.git)
+📒 [팀 노션](https://www.notion.so/1f1800c9877b8000a4e9fc894388a939?source=copy_link)
 
-## Deployment
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
